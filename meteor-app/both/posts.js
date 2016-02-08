@@ -2,7 +2,10 @@ Posts = new Mongo.Collection('posts');
 
 Meteor.methods({
   'addPost': function() {
-    Posts.insert({title: 'Post ' + Random.id()});
+    Posts.insert({
+      title: 'Post ' + Random.id(),
+      userId: this.userId
+    });
   },
 
   'deletePost': function() {

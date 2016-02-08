@@ -1,19 +1,17 @@
 import React, {
-View,
-Text,
-StyleSheet
+  View,
+  StyleSheet
 } from 'react-native';
 
-import Button from './button';
-
-import DDPClient from 'ddp-client';
-let ddpClient = new DDPClient();
+import ddpClient from './ddp';
+import LoggedIn from './loggedIn';
+import LoggedOut from './loggedOut';
 
 export default React.createClass({
   getInitialState() {
     return {
       connected: false,
-      posts: {}
+      signedIn: false
     }
   },
 
@@ -23,47 +21,26 @@ export default React.createClass({
       if (err) connected = false;
 
       this.setState({ connected: connected });
-      this.makeSubscription();
-      this.observePosts();
     });
   },
 
-  // This is just extremely simple. We're replacing the entire state whenever the collection changes
-  observePosts() {
-    let observer = ddpClient.observe("posts");
-    observer.added = (id) => {
-      this.setState({posts: ddpClient.collections.posts})
-    }
-    observer.changed = (id, oldFields, clearedFields, newFields) => {
-      this.setState({posts: ddpClient.collections.posts})
-    }
-    observer.removed = (id, oldValue) => {
-      this.setState({posts: ddpClient.collections.posts})
-    }
-  },
-
-  makeSubscription() {
-    ddpClient.subscribe("posts", [], () => {
-      this.setState({posts: ddpClient.collections.posts});
-    });
-  },
-
-  handleIncrement() {
-    ddpClient.call('addPost');
-  },
-
-  handleDecrement() {
-    ddpClient.call('deletePost');
+  changedSignedIn(status = false) {
+    this.setState({signedIn: status});
   },
 
   render() {
-    let count = Object.keys(this.state.posts).length;
+    let body;
+
+    if (this.state.connected && this.state.signedIn) {
+      body = <LoggedIn changedSignedIn={this.changedSignedIn} />; // Note the change here as well
+    } else if (this.state.connected) {
+      body = <LoggedOut changedSignedIn={this.changedSignedIn} />;
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.center}>
-          <Text>Posts: {count}</Text>
-          <Button text="Increment" onPress={this.handleIncrement}/>
-          <Button text="Decrement" onPress={this.handleDecrement}/>
+          {body}
         </View>
       </View>
     );
