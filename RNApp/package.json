@@ -6,7 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "ddp-client": "^0.1.1",
+    "ddp-client": "0.1.1",
     "react-native": "^0.19.0"
   }
 }
