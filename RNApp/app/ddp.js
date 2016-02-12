@@ -1,6 +1,10 @@
 import DDPClient from 'ddp-client';
 import { AsyncStorage } from 'react-native';
-let ddpClient = new DDPClient();
+let ddpClient = new DDPClient({
+  host: 'localhost',
+  port: '3000',
+  // url: <your websocket url>
+});
 
 ddpClient.signUpWithEmail = (email, password, cb) => {
   let params = {
